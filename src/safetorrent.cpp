@@ -1,10 +1,15 @@
 #include "safetorrent.h"
 #include "torrent.h"
+#include <iostream>
 
-int main()
-{
-    Torrent torrent = Torrent("/home/toeknee/git-repos/safe-torrent/torrent-files/ubuntu-16.04-desktop-amd64.iso.torrent");
+int main(int argc, char* argv[]) {
+    if(argc < 2){
+        std::cerr << "USAGE: safetorrent <TORRENT_FILE.torrent>" << std::endl;
+        return 1;
+    }
+
+    std::string filename = argv[1];
+    Torrent torrent = Torrent(std::string(filename));
     torrent.parseTorrent();
-    std::cout << torrent.toString() << std::endl;
     return 0;
 }
