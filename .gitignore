@@ -1,10 +1,11 @@
 # Test files
 *.torrent
 
-# Compiled Python files
+# Compiled files
 __pycache__/*
 *.pyo
 *.pyc
+*.o
 
 # Logging files
 *.log
