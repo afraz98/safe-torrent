@@ -43,25 +43,7 @@ class Torrent {
         std::string toString();
 
     private:
-        std::string parseString(std::ifstream& file);
-
-        int parseInt(std::ifstream& file);
-
-        std::vector<byte> parseBytes(std::ifstream& file, int num_bytes);
-
-        std::vector<byte> parseItem(std::ifstream& file);
-
-        std::vector<byte> parseList(std::ifstream &file);
-        
-        std::unordered_map<std::string, std::vector<byte>> parseDictionary(std::ifstream& file);
-
         std::string filename;
-
-        std::string name;
-        
-        std::string hash;
-        
-        std::vector<std::string> trackers;
 };
 
 
