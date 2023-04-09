@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -Wall
 FLAGS = -lstdc++
-CSTD = -std=c++11
+CSTD = -std=c++17
 
 SAFETORRENT = safetorrent
 OBJ1 = safetorrent.o

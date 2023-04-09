@@ -1,10 +1,19 @@
+/*
+ * \file torrent.h
+ * \brief Defines BencodeParser class
+ * \author Anthony Frazier
+ */
+
 #ifndef BENCODING_H
 #define BENCODING_H
 
 #include <iostream>
 #include <vector>
+#include <map>
+#include <variant>
 #include <unordered_map>
 #include <fstream>
+#include <any>
 
 typedef uint8_t byte;
 
@@ -23,25 +32,27 @@ typedef uint8_t byte;
  */
 
 namespace Bencoding {
-    int parseInt(std::ifstream& target);
+    typedef std::map<std::string, std::any> Dictionary;
 
-    std::string parseString(std::ifstream& target);
+    class BencodeParser {
+        public:
+            BencodeParser(std::ifstream& file);
 
-    std::vector<std::string> parseList(std::ifstream& target);
+            uint8_t parseChar();
+            
+            std::string parseString();
+            
+            uint64_t parseInt();
 
-    std::unordered_map<std::string, std::string> parseDictionary(std::ifstream& target);
+            std::vector<std::any> parseList();
 
-    std::vector<byte> parseByteString(std::ifstream& target);
+            std::vector<byte> parseBytes();
 
-    std::string encodeInt(int target);
+            Dictionary parseDictionary();
 
-    std::string encodeList(std::vector<std::string> target);
-
-    std::string encodeString(std::string target);
-
-    std::string encodeByteString(std::vector<byte> target);
-
-    std::string encodeDictionary(std::unordered_map<std::string, std::string> target);
+        private:
+            std::ifstream& m_file;
+    };
 }
 
 #endif // BENCODING_H

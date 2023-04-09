@@ -33,7 +33,8 @@ void Torrent::parseTorrent() {
     }
     
     // Parse information from torrent file
-    std::unordered_map<std::string, std::string> info_dict = Bencoding::parseDictionary(file);
+    Bencoding::BencodeParser parser(file);
+    Bencoding::Dictionary dict = parser.parseDictionary();
     
     // Close file object
     file.close();    

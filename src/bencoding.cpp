@@ -1,100 +1,72 @@
+/*
+ * \file torrent.h
+ * \brief Implements BencodeParser class
+ * \author Anthony Frazier
+ */
+
 #include "bencoding.h"
 #include <iostream>
 #include <fstream>
+#include <vector>
+#include <map>
+#include <any>
 
 namespace Bencoding {
-    std::string parseString(std::ifstream& target) {
-        int length;
-        target >> length;
-        target.ignore(1, ':'); // ignore the ':' separator
-        std::string value(length, ' ');
-        target.read(&value[0], length);
-        return value;
-    }
+    BencodeParser::BencodeParser(std::ifstream& file) : m_file(file) {}
 
-    int parseInt(std::ifstream& target) {
+    uint8_t BencodeParser::parseChar() {
         char c;
-        target >> c; // read in the 'i' character
-        int value;
-        target >> value;
-        target >> c; // read in the 'e' character
-        return value;
+        m_file.get(c);
+        return static_cast<uint8_t>(c);
     }
 
-    std::vector<byte> parseByteString(std::ifstream& target, int numBytes){
-        std::vector<byte> bytes(numBytes);
-        target.read(reinterpret_cast<char*>(&bytes[0]), numBytes);
+    std::string BencodeParser::parseString() {
+        std::string result;
+        uint64_t length = parseInt();
+        for (uint64_t i = 0; i < length; ++i) { // Iterate over <length> characters
+            result.push_back(parseChar());
+        }
+        return result;
+    }
+
+    uint64_t BencodeParser::parseInt() {
+        std::string result;
+        char c;
+
+        if(((c=parseChar()) != 'i')){ // Input is not an integer -- return
+            return -999;
+        }
+
+        while ((c = parseChar()) != 'e') { // Iterate until 'e' terminator
+            result.push_back(c);
+        }
+        return std::stoull(result);
+    }
+
+    std::vector<std::any> BencodeParser::parseList() {
+        std::vector<std::any> list;
+        
+        char c;
+        if((c = parseChar()) != 'l'){ // Input is not a list -- return
+            return list;
+        }
+
+        return list;
+    }
+
+    std::vector<byte> BencodeParser::parseBytes() {
+        std::vector<byte> bytes;
         return bytes;
     }
 
-    std::vector<std::string> parseList(std::ifstream& target){
-        return std::vector<std::string>();
-    }
-
-    std::string parseItem(std::ifstream& target){
-        char c;
-        target >> c;
-
-        switch (c) {
-            case 'i': { // integer
-                return std::to_string(parseInt(target)); // integer values are treated as zero-filled bytes
-            }
-            case 'l': { // list
-                return std::to_string(parseList(target));
-            }
-            case 'd': { // dictionary 
-                return std::to_string(parseDictionary(target));
-            }
-            default: { // byte string
-                target.putback(c); // put back the first character
-                std::string length = parseString(target);
-                return std::to_string(parseByteString(target, std::stoi(length)));
-            }
-        }
-    }
-
-    std::unordered_map<std::string, std::string> parseDictionary(std::ifstream& target){
-        std::unordered_map<std::string, std::string> dict;
+    Dictionary BencodeParser::parseDictionary() {
+        Dictionary dictionary;
 
         char c;
-        target >> c;
-
-        while (true) {
-            // check for end of dictionary
-            target >> std::ws; // skip whitespace
-            if (target.peek() == 'e') {
-                target >> c; // consume 'e'
-                break;
-            }
-
-            // read in key and value
-            std::string key = parseString(target);
-            std::string value = parseItem(target);
-
-            // add key-value pair to dictionary
-            dict[key] = std::move(value);
+        if((c = parseChar()) != 'd'){ // Input is not a dictionary -- return
+            return dictionary;
         }
 
-        return dict;
-    }
-
-    std::string encodeInt(int target){
-        return std::string("");
-    }
-
-    std::string encodeList(std::vector<std::string> target){
-        return std::string("");
-    }
-
-    std::string encodeString(std::string target){
-        return std::string("");
-    }
-
-    std::string encodeByteString(std::vector<byte> target){
-        return std::string("");
-    }
-
-    std::string encodeDictionary(std::unordered_map<std::string, std::string> target){
-        return std::string("");
+        return dictionary;
     }
 }

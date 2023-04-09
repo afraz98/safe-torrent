@@ -14,6 +14,23 @@
 
 typedef uint8_t byte;
 
+struct TorrentFile {
+    std::string path;
+    size_t length;
+};
+
+struct TorrentMetadata {
+    std::string name;
+    std::vector<std::string> announceList;
+    std::vector<std::string> announce;
+    std::vector<std::string> comment;
+    std::vector<std::string> createdBy;
+    std::vector<uint8_t> infoHash;
+    uint64_t pieceLength;
+    uint64_t fileSize;
+    std::vector<std::vector<uint8_t>> pieces;
+};
+
 class Torrent {
     /* 
      * \class Torrent 
@@ -44,6 +61,7 @@ class Torrent {
 
     private:
         std::string filename;
+        TorrentMetadata meta_data;
 };
 
 
