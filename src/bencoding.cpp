@@ -22,7 +22,18 @@ namespace Bencoding {
 
     std::string BencodeParser::parseString() {
         std::string result;
-        uint64_t length = parseInt();
+
+        // Find string length
+        std::string lengthString = "";
+        uint64_t length = 0;
+
+        char c;
+        while ((c = parseChar()) != ':') { // Iterate until 'e' terminator
+            lengthString.push_back(c);
+        }
+
+        length = std::stoull(lengthString);
+
         for (uint64_t i = 0; i < length; ++i) { // Iterate over <length> characters
             result.push_back(parseChar());
         }
@@ -33,23 +44,14 @@ namespace Bencoding {
         std::string result;
         char c;
 
-        if(((c=parseChar()) != 'i')){ // Input is not an integer -- return
-            return -999;
-        }
-
         while ((c = parseChar()) != 'e') { // Iterate until 'e' terminator
             result.push_back(c);
         }
         return std::stoull(result);
     }
 
-    std::vector<std::any> BencodeParser::parseList() {
-        std::vector<std::any> list;
-        
+    std::vector<std::any> BencodeParser::parseList(std::vector<std::any>& list) {
         char c;
-        if((c = parseChar()) != 'l'){ // Input is not a list -- return
-            return list;
-        }
 
         return list;
     }
@@ -59,14 +61,29 @@ namespace Bencoding {
         return bytes;
     }
 
-    Dictionary BencodeParser::parseDictionary() {
+    Dictionary BencodeParser::parseDictionary(Dictionary& dict) {
         Dictionary dictionary;
-
         char c;
-        if((c = parseChar()) != 'd'){ // Input is not a dictionary -- return
-            return dictionary;
-        }
 
         return dictionary;
+    }
+
+    std::any BencodeParser::parseItem(){
+        char c;
+        c = parseChar();
+
+        if(c == 'i'){
+            return parseInt();
+        } else if(c == 'd'){
+            Dictionary dict;
+            return parseDictionary(dict);
+        } else if (c == 'l'){
+            std::vector<std::any> list;
+            return parseList(list);
+        } else if (isdigit(c)) {
+            return parseString();
+        }
+
+        return NULL;
     }
 }

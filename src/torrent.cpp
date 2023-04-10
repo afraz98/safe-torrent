@@ -34,7 +34,7 @@ void Torrent::parseTorrent() {
     
     // Parse information from torrent file
     Bencoding::BencodeParser parser(file);
-    Bencoding::Dictionary dict = parser.parseDictionary();
+    // Bencoding::Dictionary dict = parser.parseDictionary();
     
     // Close file object
     file.close();    

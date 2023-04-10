@@ -1,7 +1,7 @@
 # Test files
 *.torrent
 
-# Compiled files
+# Python files
 __pycache__/*
 *.pyo
 *.pyc
@@ -14,3 +14,10 @@ __pycache__/*
 # Text editor artifacts
 *~
 *.user
+.vscode/*
+
+# Build files
+*.cmake
+*.o
+CMakeCache.txt
+build/*

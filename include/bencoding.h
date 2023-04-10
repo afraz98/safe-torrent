@@ -38,19 +38,22 @@ namespace Bencoding {
         public:
             BencodeParser(std::ifstream& file);
 
+            Dictionary parseFile();
+        private:
             uint8_t parseChar();
             
             std::string parseString();
             
             uint64_t parseInt();
 
-            std::vector<std::any> parseList();
+            std::vector<std::any> parseList(std::vector<std::any>& list);
 
             std::vector<byte> parseBytes();
 
-            Dictionary parseDictionary();
+            Dictionary parseDictionary(Dictionary& dict);
 
-        private:
+            std::any parseItem();
+
             std::ifstream& m_file;
     };
 }
